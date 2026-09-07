@@ -17,6 +17,7 @@ import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
+import SignIn from "./SignIn";
 
 const { width } = Dimensions.get("window");//
 
@@ -29,6 +30,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false);
+    const [isSignInVisible, setIsSignInVisible] = useState(false);
     const [alertDetails, setAlertDetails] = useState({question:"", onCancel:()=>{}, onConfirm:()=>{}, confirmText:""});
 
 
@@ -128,8 +130,9 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
             onCancel:()=>{setIsAlertVisible(false); setAlertDetails({})},
             onConfirm:()=>{
                 setIsAlertVisible(false);
-                console.log("Going to Sign In Modal");
                 setAlertDetails({})
+                setIsSignInVisible(true);
+                
             },
             confirmText:"Sign In"
         })
@@ -297,6 +300,13 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                 confirmText={alertDetails.confirmText}
             />
 
+            <SignIn
+                visible={isSignInVisible}
+                onClose={() => setIsSignInVisible(false)}
+                onSignInSuccess={() => {
+                    fetchTasks();
+                }}
+            />
 
             <SingleOptionAlert 
                 visible={isSingleAlertVisible} 
