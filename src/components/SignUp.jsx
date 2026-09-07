@@ -5,23 +5,23 @@ import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
-import SignUp from "./SignUp";
+import AuthService from "../services/AuthService";
 
-// Sign-in modal with email and password forms
-const SignIn = ({ visible, onClose, onSignInSuccess }) => {
+// Sign-up modal with username, email, and password forms
+const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAll }) => {
   const isDark = useThemeStore((state) => state.isDark);
   const theme = isDark ? DarkTheme : LightTheme;
 
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [isSignUpVisible, setIsSignUpVisible] = useState(false);
 
-  const handleSignIn = async () => {
+  const handleSignUp = async () => {
     setError("");
 
-    if (!email.trim() || !password.trim()) {
+    if (!username.trim() || !email.trim() || !password.trim()) {
       setError("Please fill in all fields");
       return;
     }
@@ -31,26 +31,34 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
       return;
     }
 
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await UserRepository.signInWithEmail(email, password);
+      await AuthService.SignUp(username, email, password);
+      setUsername("");
       setEmail("");
       setPassword("");
-      onSignInSuccess?.();
+      onSignUpSuccess?.();
       onClose();
     } catch (err) {
-      setError(err.message || "Sign in failed. Please try again.");
+      setError(err.message || "Sign up failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
 
+
+
   const handleClose = () => {
+    setUsername("");
     setEmail("");
     setPassword("");
     setError("");
-    setIsSignUpVisible(false);
-    onClose();
+    onCloseAll?.();
   };
 
   return (
@@ -58,7 +66,25 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.background, borderColor: theme.border }]}>
           
-          <Text style={[styles.title, { color: theme.text }]}>Sign In</Text>
+          <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
+
+          <Text style={[styles.label, { color: theme.textSecondary }]}>Username</Text>
+          <TextInput
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.button,
+                color: theme.text,
+                borderColor: error ? theme.danger : theme.border,
+              },
+            ]}
+            placeholder="Enter your username"
+            placeholderTextColor={theme.textSecondary}
+            value={username}
+            onChangeText={setUsername}
+            editable={!isLoading}
+            autoCapitalize="none"
+          />
 
           <Text style={[styles.label, { color: theme.textSecondary }]}>Email</Text>
           <TextInput
@@ -104,7 +130,8 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
           <View style={styles.actions}>
             <TouchableOpacity
               onPress={() => {
-                setIsSignUpVisible(true);
+                onSwitchToSignIn?.();
+                setUsername("");
                 setEmail("");
                 setPassword("");
                 setError("");
@@ -112,7 +139,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
               activeOpacity={0.7}
               disabled={isLoading}
             >
-              <Text style={[styles.signUpLinkText, { color: theme.primary }]}>Sign Up</Text>
+              <Text style={[styles.signInLinkText, { color: theme.primary }]}>Sign In</Text>
             </TouchableOpacity>
 
             <View style={styles.rightActions}>
@@ -126,32 +153,21 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
               </TouchableOpacity>
 
               <TouchableOpacity
-                onPress={handleSignIn}
-                style={[styles.signInButton, { backgroundColor: theme.primary, opacity: isLoading ? 0.6 : 1 }]}
+                onPress={handleSignUp}
+                style={[styles.signUpButton, { backgroundColor: theme.primary, opacity: isLoading ? 0.6 : 1 }]}
                 activeOpacity={0.7}
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={styles.signInText}>Sign In</Text>
+                  <Text style={styles.signUpText}>Sign Up</Text>
                 )}
               </TouchableOpacity>
             </View>
           </View>
         </View>
       </View>
-
-      <SignUp
-        visible={isSignUpVisible}
-        onClose={() => setIsSignUpVisible(false)}
-        onSignUpSuccess={onSignInSuccess}
-        onSwitchToSignIn={() => setIsSignUpVisible(false)}
-        onCloseAll={() => {
-          setIsSignUpVisible(false);
-          onClose();
-        }}
-      />
     </Modal>
   );
 };
@@ -213,7 +229,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
 
-  signUpLinkText: {
+  signInLinkText: {
     fontSize: 14,
     fontFamily: Fonts.BodySemiBold,
   },
@@ -228,7 +244,7 @@ const styles = StyleSheet.create({
     fontFamily: Fonts.BodySemiBold,
   },
 
-  signInButton: {
+  signUpButton: {
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
@@ -238,11 +254,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
 
-  signInText: {
+  signUpText: {
     fontSize: 14,
     fontFamily: Fonts.BodySemiBold,
     color: "#fff",
   },
 });
 
-export default SignIn;
+export default SignUp;
