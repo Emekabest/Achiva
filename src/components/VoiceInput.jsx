@@ -30,6 +30,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false);
+    const [singleAlertDetails, setSingleAlertDetails] = useState({question:"", onCancel:()=>{}, confirmText:""})
     const [isSignInVisible, setIsSignInVisible] = useState(false);
     const [alertDetails, setAlertDetails] = useState({question:"", onCancel:()=>{}, onConfirm:()=>{}, confirmText:""});
 
@@ -145,6 +146,8 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
 
 
+
+
         try{
 
             if (!isRecordingMode) {
@@ -153,9 +156,9 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                 if (!recordSession.current) {
                     recordSession.current = true;
                     
-                
+                    
                     const isPermissionGranted = await requestPermissions();
-
+                    
                     
                     if (!isPermissionGranted) {
                         setAlertDetails({
@@ -167,7 +170,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                         setIsAlertVisible(true);
                         return;
                     }
-
+                    
 
 
                     const recording = await startRecording();
@@ -216,8 +219,12 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                     fetchTasks();
                }
                else{
+                    setSingleAlertDetails({
+                        question:"Could not transcribe your speech, Please try again",
+                        onCancel:()=>{setIsSingleAlertVisible(false)},
+                        confirmText:"Ok"
+                    })
                     setIsSingleAlertVisible(true)
-
                }
 
             }
@@ -229,8 +236,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
 
    }
-
-
 
 
 
@@ -304,15 +309,22 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                 visible={isSignInVisible}
                 onClose={() => setIsSignInVisible(false)}
                 onSignInSuccess={() => {
-                    fetchTasks();
+                    
+                   setSingleAlertDetails({
+                    question:"You have successfully Signed In",
+                    onCancel:()=>{setIsSingleAlertVisible(false)},
+                    confirmText:"Ok"
+                })
+
+                setIsSingleAlertVisible(true);
                 }}
             />
 
             <SingleOptionAlert 
                 visible={isSingleAlertVisible} 
-                question={"Could not transcribe your speech, Please try again."} 
-                onCancel={()=> setIsSingleAlertVisible(false)} 
-                confirmText ="Ok" 
+                question={singleAlertDetails.question} 
+                onCancel={singleAlertDetails.onCancel} 
+                confirmText ={singleAlertDetails.confirmText}
             />
 
             <Loader 

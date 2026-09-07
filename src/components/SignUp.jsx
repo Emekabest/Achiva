@@ -46,6 +46,11 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
       setPassword("");
       onSignUpSuccess?.();
       onCloseAll?.();
+
+
+
+
+
     } catch (err) {
 
         if (err.code === "auth/email-already-in-use"){
@@ -66,6 +71,8 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
 
 
 
+
+
   const handleClose = () => {
     setUsername("");
     setEmail("");
@@ -73,6 +80,13 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
     setError("");
     onCloseAll?.();
   };
+
+
+  
+
+
+
+
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig.js";
 
 class AuthService{
@@ -17,9 +17,11 @@ class AuthService{
             displayName: username,
             });
 
-            console.log(user)
 
-            // return user;
+            await sendEmailVerification(user);
+            
+
+            return user;
 
         } catch (error) {
             throw error;
@@ -37,10 +39,7 @@ class AuthService{
             password
         );
 
-
-        console.log(userCredential)
-
-        // return userCredential.user;
+        return userCredential.user;
 
     }
 

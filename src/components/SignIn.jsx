@@ -21,8 +21,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
   const [error, setError] = useState("");
   const [isSignUpVisible, setIsSignUpVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false)
-  const [singleAlertDetails, setSingleAlertDetails] = useState({question:"", onCancel:()=>{}, confirmText:""})
+
 
 
   const handleSignIn = async () => {
@@ -40,24 +39,18 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
 
     setIsLoading(true);
     try {
-      await AuthService.SignIn(email, password);
+     const user = await AuthService.SignIn(email, password);
+     
+     const { displayName, uid  } = user
 
+     await UserRepository.setUser({username:displayName, email:user.email, uid})
+
+        
       setEmail("");
       setPassword("");
       setIsSignUpVisible(false);
       onSignInSuccess?.();
-
-
-      setSingleAlertDetails({
-        question:"You have successfully Signed In",
-        onCancel:()=>{setIsSingleAlertVisible(false)},
-        confirmText:"Ok"
-      })
-      setIsSingleAlertVisible(true)
-
-      
       onClose();
-
 
 
     } catch (err) {
@@ -77,6 +70,8 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
       setIsLoading(false);
     }
   };
+
+
 
   const handleClose = () => {
 
@@ -191,6 +186,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
         </View>
       </View>
 
+
       <SignUp
         visible={isSignUpVisible}
         onClose={() => setIsSignUpVisible(false)}
@@ -203,12 +199,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
       />
 
 
-      <SingleOptionAlert 
-                visible={isSingleAlertVisible} 
-                question={"Could not transcribe your speech, Please try again."} 
-                onCancel={()=> setIsSingleAlertVisible(false)} 
-                confirmText ="Ok" 
-       />
+     
     </Modal>
   );
 };
