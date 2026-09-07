@@ -1,5 +1,6 @@
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
 import { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
 import Fonts from "../constants/font";
 import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
@@ -17,6 +18,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isSignUpVisible, setIsSignUpVisible] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleSignIn = async () => {
     setError("");
@@ -80,22 +82,36 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
           />
 
           <Text style={[styles.label, { color: theme.textSecondary }]}>Password</Text>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: theme.button,
-                color: theme.text,
-                borderColor: error ? theme.danger : theme.border,
-              },
-            ]}
-            placeholder="Enter your password"
-            placeholderTextColor={theme.textSecondary}
-            value={password}
-            onChangeText={setPassword}
-            editable={!isLoading}
-            secureTextEntry
-          />
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={[
+                styles.input,
+                styles.passwordInput,
+                {
+                  backgroundColor: theme.button,
+                  color: theme.text,
+                  borderColor: error ? theme.danger : theme.border,
+                },
+              ]}
+              placeholder="Enter your password"
+              placeholderTextColor={theme.textSecondary}
+              value={password}
+              onChangeText={setPassword}
+              editable={!isLoading}
+              secureTextEntry={!isPasswordVisible}
+            />
+            <TouchableOpacity
+              onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+              style={styles.eyeIcon}
+              activeOpacity={0.7}
+            >
+              <Ionicons
+                name={isPasswordVisible ? "eye" : "eye-off"}
+                size={20}
+                color={theme.textSecondary}
+              />
+            </TouchableOpacity>
+          </View>
 
           {error ? (
             <Text style={[styles.errorText, { color: theme.danger }]}>{error}</Text>
@@ -193,6 +209,23 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 14,
     fontFamily: Fonts.BodyRegular,
+  },
+
+  passwordContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+  },
+
+  passwordInput: {
+    flex: 1,
+    paddingRight: 40,
+  },
+
+  eyeIcon: {
+    position: "absolute",
+    right: 12,
+    paddingVertical: 10,
   },
 
   errorText: {
