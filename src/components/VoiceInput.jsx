@@ -29,6 +29,9 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     const [isAlertVisible, setIsAlertVisible] = useState(false);
     const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false);
+    const [alertDetails, setAlertDetails] = useState({question:"", onCancel:()=>{}, onConfirm:()=>{}, confirmText:""});
+
+
     const [isRecordingMode, setIsRecordingMode] = useState(false);
     const [isTranscribing, setIsTranscribing] = useState(false);
     const [recordingDuration, setRecordingDuration] = useState("0:0");
@@ -39,67 +42,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     const { requestPermissions, startRecording, stopRecording } = useVoiceRecorder();
 
-    const styles = StyleSheet.create({
-        container:{
-            width:55,
-            height:55,
-            position:"absolute",
-            bottom:70,
-            left: width / 2 - 27.5,
-            borderRadius:50,
-            justifyContent:"center",
-            alignItems:"center",
-            zIndex:2
-        },
-        recordingState:{
-            width:"100%",
-            height:"100%",
-            justifyContent:"center",
-            alignItems:"center",
-        },
-        recordingRing:{
-            position:"absolute",
-            width:56,
-            height:56,
-            borderRadius:28,
-            borderWidth:2,
-            borderColor: theme.primary,
-        },
-        recordingIcon:{
-            width:46,
-            height:46,
-            borderRadius:23,
-            justifyContent:"center",
-            alignItems:"center",
-            overflow:"hidden",
-        },
-        aiBadge:{
-            position:"absolute",
-            right: -2,
-            bottom: -2,
-            width: 18,
-            height: 18,
-            borderRadius: 9,
-            backgroundColor: "rgba(255,255,255,0.2)",
-            borderWidth: 1,
-            borderColor: "rgba(255,255,255,0.4)",
-            justifyContent:"center",
-            alignItems:"center",
-        },
-        recorderDetailsContainer:{
-            position:"absolute",
-            height:50,
-            width:"100%",
-            bottom:0,
-            flexDirection:"row",
-            borderTopWidth:0.5,
-            borderTopColor: theme.border,
-            zIndex:2,
-        },
-    });
-
-
-    
+  
 
     useEffect(() => {
         if (!isRecordingMode) {
@@ -180,13 +123,20 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     if (!user){
 
-        console.log("Login to continue.")
+        setAlertDetails({
+            question:"Sign In to access the AI Voice Input",
+            onCancel:()=>{setIsAlertVisible(false); setAlertDetails({})},
+            onConfirm:()=>{
+                setIsAlertVisible(false);
+                console.log("Going to Login Screen");
+                setAlertDetails({})
+            },
+            confirmText:"Sign In"
+        })
+        setIsAlertVisible(true);
+        
         return;
     }
-
-
-
-
 
 
 
@@ -205,6 +155,12 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
                     
                     if (!isPermissionGranted) {
+                        setAlertDetails({
+                            question:`Microphone access is required for voice input. Please enable microphone permissions in your device settings.`,
+                            onCancel: ()=>{ setIsAlertVisible(false); },
+                            onConfirm:()=>{ Linking.openSettings(); },
+                            confirmText:"Open Settings"
+                        })
                         setIsAlertVisible(true);
                         return;
                     }
@@ -293,6 +249,8 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                                             inputRange: [1, 1.2],
                                             outputRange: [0.35, 1],
                                         }),
+                                        borderColor: theme.primary,
+
                                     },
                                 ]}
                             />
@@ -313,7 +271,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
             {
                 isRecordingMode && (
-                        <View style={[styles.recorderDetailsContainer, { backgroundColor: theme.background, borderTopColor: theme.border }]}>
+                        <View style={[styles.recorderDetailsContainer, { backgroundColor: theme.background, borderTopColor: theme.border, }]}>
                             <View style={{width:"50%", paddingHorizontal: 20, justifyContent:"center", height:"100%", }}>
                                 <Text style={{color: theme.text, fontFamily:Fonts.BodySemiBold}}>{recordingDuration}</Text>
                             </View>
@@ -333,10 +291,10 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
             <Alert 
                 visible={isAlertVisible}
-                question={`Microphone access is required for voice input. Please enable microphone permissions in your device settings.`}
-                onCancel={() => setIsAlertVisible(false)}
-                onConfirm={() => Linking.openSettings()}
-                confirmText="Open Settings"
+                question={alertDetails.question}
+                onCancel={alertDetails.onCancel}
+                onConfirm={alertDetails.onConfirm}
+                confirmText={alertDetails.confirmText}
             />
 
 
@@ -355,6 +313,66 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
     )
 }
+
+
+  const styles = StyleSheet.create({
+        container:{
+            width:55,
+            height:55,
+            position:"absolute",
+            bottom:70,
+            left: width / 2 - 27.5,
+            borderRadius:50,
+            justifyContent:"center",
+            alignItems:"center",
+            zIndex:2
+        },
+        recordingState:{
+            width:"100%",
+            height:"100%",
+            justifyContent:"center",
+            alignItems:"center",
+        },
+        recordingRing:{
+            position:"absolute",
+            width:56,
+            height:56,
+            borderRadius:28,
+            borderWidth:2,
+            
+        },
+        recordingIcon:{
+            width:46,
+            height:46,
+            borderRadius:23,
+            justifyContent:"center",
+            alignItems:"center",
+            overflow:"hidden",
+        },
+        aiBadge:{
+            position:"absolute",
+            right: -2,
+            bottom: -2,
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            backgroundColor: "rgba(255,255,255,0.2)",
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.4)",
+            justifyContent:"center",
+            alignItems:"center",
+        },
+        recorderDetailsContainer:{
+            position:"absolute",
+            height:50,
+            width:"100%",
+            bottom:0,
+            flexDirection:"row",
+            borderTopWidth:0.5,
+            
+            zIndex:2,
+        },
+    });
 
 
 
