@@ -82,9 +82,6 @@ const handleFilterTask = async(filter)=>{
 
 
 
- 
-
-
     return(
         <View style={styles.container}>
             <View style = {styles.left}>

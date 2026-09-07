@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View, Linking, Dimensions, Animated, Text, Modal } from "react-native";
 import Colors from "../constants/color";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMicrophone, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faMicrophone, faPaperPlane, faStar } from "@fortawesome/free-solid-svg-icons";
 import Alert from "./Alert";
 import { useEffect, useRef, useState } from "react";
 import { RecordingPresets, useAudioRecorder, useAudioRecorderState } from "expo-audio";
@@ -16,6 +16,7 @@ import Loader from "./Loader";
 import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
+import UserRepository from "../repository/UserRepository";
 
 const { width } = Dimensions.get("window");//
 
@@ -71,6 +72,19 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
             justifyContent:"center",
             alignItems:"center",
             overflow:"hidden",
+        },
+        aiBadge:{
+            position:"absolute",
+            right: -2,
+            bottom: -2,
+            width: 18,
+            height: 18,
+            borderRadius: 9,
+            backgroundColor: "rgba(255,255,255,0.2)",
+            borderWidth: 1,
+            borderColor: "rgba(255,255,255,0.4)",
+            justifyContent:"center",
+            alignItems:"center",
         },
         recorderDetailsContainer:{
             position:"absolute",
@@ -161,6 +175,22 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
     
    // Starts or stops voice capture and processes the result into tasks.
    const handleVoiceInput = async () => {
+
+    const user = await UserRepository.getUser();
+
+    if (!user){
+
+        console.log("Login to continue.")
+        return;
+    }
+
+
+
+
+
+
+
+
 
         try{
 
