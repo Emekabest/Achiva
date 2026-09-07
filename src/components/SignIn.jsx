@@ -7,6 +7,8 @@ import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
 import SignUp from "./SignUp";
+import AuthService from "../services/AuthService";
+import SingleOptionAlert from "./SingleOptionAlert";
 
 // Sign-in modal with email and password forms
 const SignIn = ({ visible, onClose, onSignInSuccess }) => {
@@ -19,6 +21,9 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
   const [error, setError] = useState("");
   const [isSignUpVisible, setIsSignUpVisible] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false)
+  const [singleAlertDetails, setSingleAlertDetails] = useState({question:"", onCancel:()=>{}, confirmText:""})
+
 
   const handleSignIn = async () => {
     setError("");
@@ -35,19 +40,47 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
 
     setIsLoading(true);
     try {
-      await UserRepository.signInWithEmail(email, password);
+      await AuthService.SignIn(email, password);
+
       setEmail("");
       setPassword("");
+      setIsSignUpVisible(false);
       onSignInSuccess?.();
+
+
+      setSingleAlertDetails({
+        question:"You have successfully Signed In",
+        onCancel:()=>{setIsSingleAlertVisible(false)},
+        confirmText:"Ok"
+      })
+      setIsSingleAlertVisible(true)
+
+      
       onClose();
+
+
+
     } catch (err) {
-      setError(err.message || "Sign in failed. Please try again.");
+        console.log(err.code)
+      if (err.code === "auth/invalid-credential"){
+            setError("Invalid Email or Password");
+
+        }
+        else if (err.code === "auth/network-request-failed"){
+            setError("Network Error. Check your internet connection")
+        }
+    else{
+            setError("Sign in failed. Please try again.");
+        }
+      
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleClose = () => {
+
+    console.log('omoo')
     setEmail("");
     setPassword("");
     setError("");
@@ -168,6 +201,14 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
           onClose();
         }}
       />
+
+
+      <SingleOptionAlert 
+                visible={isSingleAlertVisible} 
+                question={"Could not transcribe your speech, Please try again."} 
+                onCancel={()=> setIsSingleAlertVisible(false)} 
+                confirmText ="Ok" 
+       />
     </Modal>
   );
 };

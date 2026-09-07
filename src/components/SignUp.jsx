@@ -45,9 +45,20 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
       setEmail("");
       setPassword("");
       onSignUpSuccess?.();
-      onClose();
+      onCloseAll?.();
     } catch (err) {
-      setError(err.message || "Sign up failed. Please try again.");
+
+        if (err.code === "auth/email-already-in-use"){
+            setError("Email already in use, Try another email")
+        }
+        else if (err.code === "auth/network-request-failed") {
+            setError("Network Error. Check your internet connection")
+        }
+        else{
+            setError("Sign up failed. Please try again.");
+        }
+
+
     } finally {
       setIsLoading(false);
     }

@@ -1,4 +1,4 @@
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig.js";
 
 class AuthService{
@@ -25,6 +25,22 @@ class AuthService{
             throw error;
         }
         
+
+    }
+
+
+    async SignIn(email, password){
+
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+
+
+        console.log(userCredential)
+
+        // return userCredential.user;
 
     }
 
