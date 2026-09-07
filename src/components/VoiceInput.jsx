@@ -128,7 +128,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
             onCancel:()=>{setIsAlertVisible(false); setAlertDetails({})},
             onConfirm:()=>{
                 setIsAlertVisible(false);
-                console.log("Going to Login Screen");
+                console.log("Going to Sign In Modal");
                 setAlertDetails({})
             },
             confirmText:"Sign In"
