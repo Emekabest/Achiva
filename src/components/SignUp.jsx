@@ -7,6 +7,7 @@ import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
 import AuthService from "../services/AuthService";
+import EmailVerification from "./EmailVerification";
 
 // Sign-up modal with username, email, and password forms
 const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAll }) => {
@@ -19,6 +20,9 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isEmailVerificationVisible, setIsEmailVerificationVisible] = useState(false);
+  const [verificationUser, setVerificationUser] = useState(null);
+  const [verificationEmail, setVerificationEmail] = useState("");
 
   const handleSignUp = async () => {
     setError("");
@@ -40,15 +44,18 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
 
     setIsLoading(true);
     try {
-      await AuthService.SignUp(username, email, password);
+     const user = await AuthService.SignUp(username, email, password);
+
+     const { displayName, emailVerified, uid  } = user
+
+     
+      setVerificationUser(user);
+      setVerificationEmail(user.email);
+      setIsEmailVerificationVisible(true);
       setUsername("");
-      setEmail("");
       setPassword("");
-      onSignUpSuccess?.();
-      onCloseAll?.();
 
-
-
+    await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
 
 
     } catch (err) {
@@ -78,11 +85,41 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
     setEmail("");
     setPassword("");
     setError("");
+    setIsEmailVerificationVisible(false);
+    setVerificationUser(null);
+    setVerificationEmail("");
+    onCloseAll?.();
+  };
+
+  const handleVerificationComplete = () => {
+
+
+
+    setIsEmailVerificationVisible(false);
+    setVerificationUser(null);
+    setVerificationEmail("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setError("");
+    onSignUpSuccess?.();
     onCloseAll?.();
   };
 
 
-  
+
+  const handleResendVerificationEmail = async () => {
+    try {
+      await AuthService.sendEmailVerification(verificationUser);
+    } catch (err) {
+
+
+      throw new Error(err.message || "Failed to resend verification email");
+    }
+  };
+
+
+
 
 
 
@@ -209,6 +246,13 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
           </View>
         </View>
       </View>
+
+      <EmailVerification
+        visible={isEmailVerificationVisible}
+        email={verificationEmail}
+        onVerified={handleVerificationComplete}
+        onResendEmail={handleResendVerificationEmail}
+      />
     </Modal>
   );
 };

@@ -11,7 +11,7 @@ class UserRepository{
     }
 
     async getUser(){
-        await AsyncStorage.clear()
+        // await AsyncStorage.clear()
         const user =  await AsyncStorage.getItem(this.STORAGE_KEY);
 
 

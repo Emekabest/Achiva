@@ -38,12 +38,17 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
     }
 
     setIsLoading(true);
+
+    
+
+
+
     try {
      const user = await AuthService.SignIn(email, password);
      
-     const { displayName, uid  } = user
+     const { displayName, emailVerified, uid} = user
 
-     await UserRepository.setUser({username:displayName, email:user.email, uid})
+     await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
 
         
       setEmail("");
@@ -51,7 +56,6 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
       setIsSignUpVisible(false);
       onSignInSuccess?.();
       onClose();
-
 
     } catch (err) {
         console.log(err.code)

@@ -123,6 +123,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
    const handleVoiceInput = async () => {
 
     const user = await UserRepository.getUser();
+    
 
     if (!user){
 
@@ -141,6 +142,12 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
         
         return;
     }
+    else if (!user.emailVerified){
+        
+
+        return;
+    }
+    
 
 
 

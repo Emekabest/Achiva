@@ -18,12 +18,14 @@ class AuthService{
             });
 
 
-            await sendEmailVerification(user);
+            await this.sendEmailVerification(user);
+
             
 
             return user;
 
         } catch (error) {
+            console.log(error.code, error.message)
             throw error;
         }
         
@@ -40,6 +42,22 @@ class AuthService{
         );
 
         return userCredential.user;
+
+    }
+
+
+    
+    async sendEmailVerification(user){
+
+        try {
+            console.log(user.email)
+            const res = await sendEmailVerification(user);
+
+
+        } catch (error) {
+            console.log(error.message, error.code)
+        }
+
 
     }
 
