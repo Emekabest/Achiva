@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "TaskFlow",
-    "slug": "TaskFlow",
+    "name": "Achiva",
+    "slug": "Achiva",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -16,7 +16,7 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "package": "com.jojo.TaskFlow",
+      "package": "com.jojo.Achiva",
       "permissions": [
         "android.permission.RECORD_AUDIO"
       ]
@@ -27,7 +27,12 @@
     "plugins": [
       "expo-font",
       "expo-audio"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "2f1bf3e0-30be-4e27-84bd-83ff1e65c61f"
+      }
+    },
+    "owner": "jojo104"
   }
 }
-// horlaarsman

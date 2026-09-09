@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { auth } from "../../firebaseConfig";
 
 
 class UserRepository{
@@ -7,6 +8,7 @@ class UserRepository{
 
     async setUser(user){
         await AsyncStorage.setItem(this.STORAGE_KEY, JSON.stringify(user));
+        console.log("updated from set!")
 
     }
 
@@ -18,6 +20,12 @@ class UserRepository{
         return user ? JSON.parse(user) : null;
     }
 
+    async updateUser(user){
+        
+        const {displayName, email, emailVerified, uid  } = user;
+
+        await this.setUser({username:displayName, email, emailVerified, uid});
+    }
 
 }
 

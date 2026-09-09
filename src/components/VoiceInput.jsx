@@ -18,6 +18,9 @@ import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
 import SignIn from "./SignIn";
+import EmailVerification from "./EmailVerification";
+import AuthService from "../services/AuthService";
+import { auth } from "../../firebaseConfig.js";
 
 const { width } = Dimensions.get("window");//
 
@@ -32,6 +35,8 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
     const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false);
     const [singleAlertDetails, setSingleAlertDetails] = useState({question:"", onCancel:()=>{}, confirmText:""})
     const [isSignInVisible, setIsSignInVisible] = useState(false);
+    const [isEmailVerificationVisible, setIsEmailVerificationVisible] = useState(false);
+    const [verificationEmail, setVerificationEmail] = useState("");
     const [alertDetails, setAlertDetails] = useState({question:"", onCancel:()=>{}, onConfirm:()=>{}, confirmText:""});
 
 
@@ -121,10 +126,11 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
     
    // Starts or stops voice capture and processes the result into tasks.
    const handleVoiceInput = async () => {
+    console.log(auth.currentUser.emailVerified)
+
 
     const user = await UserRepository.getUser();
-    
-
+    console.log(user)
     if (!user){
 
         setAlertDetails({
@@ -142,14 +148,27 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
         
         return;
     }
-    else if (!user.emailVerified){
-        
+    // else if (!user?.emailVerified){
 
-        return;
-    }
+
+    //     setAlertDetails({
+    //         question:"Your account isn't verified yet",
+    //         onCancel:()=>{setIsAlertVisible(false)},
+    //         onConfirm:async()=>{
+    //             setIsAlertVisible(false);
+
+    //             setVerificationEmail(user.email || "");
+    //             setIsEmailVerificationVisible(true);
+
+    //             await AuthService.sendEmailVerification(auth.currentUser);
+    //         },
+    //         confirmText:"Verify Now"
+    //     })
+    //     setIsAlertVisible(true);
+
+    //     return;
+    // }
     
-
-
 
 
 
@@ -245,7 +264,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
    }
 
 
-
+//    console.log(auth.currentUser)
 
     return(
         <View>
@@ -280,7 +299,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                     )
                } 
                 
-            
             </TouchableOpacity>
 
 
@@ -299,10 +317,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
                         </View>
                 )
-
             }
-
-            
 
             <Alert 
                 visible={isAlertVisible}
@@ -325,6 +340,19 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
                 setIsSingleAlertVisible(true);
                 }}
+            />
+
+            <EmailVerification
+                visible={isEmailVerificationVisible}
+                email={verificationEmail}
+                onVerified={async() => {
+                    setIsEmailVerificationVisible(false);
+                    await auth.currentUser.reload(); 
+                    await UserRepository.updateUser(auth.currentUser);
+
+                }}
+                onResendEmail={async() => await AuthService.sendEmailVerification(auth.currentUser)}
+                onDoThisLater={() => setIsEmailVerificationVisible(false)}
             />
 
             <SingleOptionAlert 

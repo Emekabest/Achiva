@@ -46,8 +46,9 @@ class AuthService{
     }
 
 
-    
+
     async sendEmailVerification(user){
+        console.log(user)
 
         try {
             console.log(user.email)

@@ -8,6 +8,7 @@ import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
 import AuthService from "../services/AuthService";
 import EmailVerification from "./EmailVerification";
+import { auth } from "../../firebaseConfig";
 
 // Sign-up modal with username, email, and password forms
 const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAll }) => {
@@ -91,10 +92,22 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
     onCloseAll?.();
   };
 
-  const handleVerificationComplete = () => {
+  const handleVerificationComplete = async() => {
 
 
+    await auth.currentUser.reload();
+    setIsEmailVerificationVisible(false);
+    setVerificationUser(null);
+    setVerificationEmail("");
+    setUsername("");
+    setEmail("");
+    setPassword("");
+    setError("");
+    onSignUpSuccess?.();
+    onCloseAll?.();
+  };
 
+  const handleDoThisLater = () => {
     setIsEmailVerificationVisible(false);
     setVerificationUser(null);
     setVerificationEmail("");
@@ -252,6 +265,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
         email={verificationEmail}
         onVerified={handleVerificationComplete}
         onResendEmail={handleResendVerificationEmail}
+        onDoThisLater={handleDoThisLater}
       />
     </Modal>
   );

@@ -6,7 +6,7 @@ import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
 
 // Email verification modal
-const EmailVerification = ({ visible, email, onVerified, onResendEmail }) => {
+const EmailVerification = ({ visible, email, onVerified, onResendEmail, onDoThisLater }) => {
   const isDark = useThemeStore((state) => state.isDark);
   const theme = isDark ? DarkTheme : LightTheme;
 
@@ -59,6 +59,14 @@ const EmailVerification = ({ visible, email, onVerified, onResendEmail }) => {
             ) : (
               <Text style={[styles.resendText, { color: theme.primary }]}>Resend email</Text>
             )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={onDoThisLater}
+            activeOpacity={0.7}
+            style={styles.laterButton}
+          >
+            <Text style={[styles.laterText, { color: theme.textSecondary }]}>I'll do this later</Text>
           </TouchableOpacity>
 
           {resendMessage ? (
@@ -130,6 +138,18 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     alignItems: "center",
     justifyContent: "center",
+  },
+
+  laterButton: {
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 4,
+  },
+
+  laterText: {
+    fontSize: 14,
+    fontFamily: Fonts.BodySemiBold,
   },
 
   resendText: {
