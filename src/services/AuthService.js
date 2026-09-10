@@ -1,6 +1,10 @@
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth } from "../../firebaseConfig.js";
 
+
+
+
+
 class AuthService{
 
 
@@ -61,6 +65,9 @@ class AuthService{
 
 
     }
+
+
+
 
 }
 
