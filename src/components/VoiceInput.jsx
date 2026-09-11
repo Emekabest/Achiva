@@ -126,7 +126,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
     
    // Starts or stops voice capture and processes the result into tasks.
    const handleVoiceInput = async () => {
-    console.log(auth.currentUser.emailVerified)
 
 
     const user = await UserRepository.getUser();

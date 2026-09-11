@@ -10,6 +10,7 @@ import SignUp from "./SignUp";
 import AuthService from "../services/AuthService";
 import SingleOptionAlert from "./SingleOptionAlert";
 import googleLogo from "../../assets/google-logo.png"
+import GoogleAuthService from "../services/GoogleAuthService";
 
 // Sign-in modal with email and password forms
 const SignIn = ({ visible, onClose, onSignInSuccess }) => {
@@ -77,6 +78,31 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
   };
 
 
+  const handleSignInWithGoogle = async()=>{
+
+  try{
+    const user = await GoogleAuthService.signIn();
+    const { displayName, emailVerified, uid} = user
+
+    await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
+
+    onSignInSuccess?.();
+    setIsSignUpVisible(false);
+    onClose();
+  }
+  catch(error){
+
+      setError("Sign in failed. Please try again.");
+
+  }
+  finally{
+    setIsLoading(false);
+
+  }
+
+}
+
+
 
   const handleClose = () => {
 
@@ -100,7 +126,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
           <Text style={[styles.title, { color: theme.text }]}>Sign In</Text>
 
 
-            <TouchableOpacity style={{display:"flex", flexDirection:"row", borderWidth:2, borderColor:theme.primary, justifyContent:"center", alignItems:"center", paddingHorizontal:10, borderRadius:50}}>
+            <TouchableOpacity onPress={handleSignInWithGoogle} activeOpacity={1} style={{display:"flex", flexDirection:"row", borderWidth:2, borderColor:theme.primary, justifyContent:"center", alignItems:"center", paddingHorizontal:10, borderRadius:50}}>
                 <Image source={googleLogo} style={{height:25, width:25, marginRight:5}} />
                 <Text style={{fontFamily:Fonts.BodySemiBold, fontSize:13, color:theme.text}}>Continue with Google</Text>
             </TouchableOpacity>
@@ -217,8 +243,6 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
         }}
       />
 
-
-     
     </Modal>
   );
 };

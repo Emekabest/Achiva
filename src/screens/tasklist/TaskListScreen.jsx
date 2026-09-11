@@ -111,13 +111,13 @@ const TaskListScreen = () => {
 
 
 
-  } )
+  })
 
 
 
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
-        <Header title="Task Flow" onMenuPress={() => setIsDrawerVisible(true)} />
+        <Header title="Achiva" onMenuPress={() => setIsDrawerVisible(true)} />
 
 
         {
