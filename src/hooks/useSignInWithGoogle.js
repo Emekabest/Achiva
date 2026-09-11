@@ -7,16 +7,24 @@ const useSignInWithGoogle = ({onClose, onCloseAll, onSignInSuccess, onSignUpSucc
  const signIn = async()=>{
 
   try{
-    const user = await GoogleAuthService.signIn();
-    const { displayName, emailVerified, uid} = user
+    const response = await GoogleAuthService.signIn();
 
-    await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
+    if (response.status === 200){
 
-    onSignInSuccess?.();
-    onSignUpSuccess?.();
-    setIsSignUpVisible?.(false);
-    onClose();
-    onCloseAll?.();
+        const user = response.data;
+
+        const { displayName, emailVerified, uid} = user;
+
+        await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
+
+        onSignInSuccess?.();
+        onSignUpSuccess?.();
+        setIsSignUpVisible?.(false);
+        onClose();
+        onCloseAll?.();
+    }
+   
+
   }
   catch(error){
 

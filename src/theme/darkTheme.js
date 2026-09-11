@@ -8,7 +8,7 @@ const DarkTheme = {
   danger: '#EF4444',
 
   background: '#121212',
-  button: '#121212',
+  button: '#333',
   icon:"#b4b4b4",
 
   text: '#b0b0b0',

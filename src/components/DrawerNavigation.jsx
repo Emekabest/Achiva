@@ -8,6 +8,11 @@ import LightTheme from "../theme/lightTheme";
 import UserRepository from "../repository/UserRepository";
 import { extractFirstname, getFirstLetter } from "../utils/extractFirstname";
 import { Ionicons } from "@expo/vector-icons";
+import Profile from "./Profile";
+import GoogleAuthService from "../services/GoogleAuthService";
+import Alert from "./Alert";
+import SignIn from "./SignIn";
+import SingleOptionAlert from "./SingleOptionAlert";
 
 const statusBarHeight = Constants.statusBarHeight;
 
@@ -18,8 +23,16 @@ const DrawerNavigation = ({ visible, onClose }) => {
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
   const [user, setUser] = useState(null);
+  const [isProfileVisible, setIsProfileVisible] = useState(false);
+  const [isAlertVisible, setIsAlertVisible] = useState(false);
+  const [alertDetails, setAlertDetails] = useState({question:"", onCancel:()=>{}, onConfirm:()=>{}, confirmText:""});
+  const [isSignInVisible, setIsSignInVisible] = useState(false);
+  const [isSingleAlertVisible, setIsSingleAlertVisible] = useState(false);
+  const [singleAlertDetails, setSingleAlertDetails] = useState({question:"", onCancel:()=>{}, confirmText:""})
 
   const [slideAnim] = useState(new Animated.Value(-300));
+
+
 
   useEffect(() => {
     if (visible) {
@@ -45,6 +58,36 @@ const DrawerNavigation = ({ visible, onClose }) => {
     },[visible])
 
 
+    const handleSignOut = async()=>{
+
+      try {
+        await UserRepository.removeUser();
+
+        await GoogleAuthService.signOut();
+
+      } catch (error) {
+        console.log(error)
+      }
+      finally{
+        setIsAlertVisible(false);
+      }
+     
+    }
+
+
+    const activateAlert = ({question, onConfirm, onCancel, confirmText})=>{
+
+      setAlertDetails({
+        question,
+        onConfirm,
+        onCancel,
+        confirmText
+      })
+
+      setIsAlertVisible(true)   
+    }
+    
+
 
   return (
     <Modal transparent visible={visible} animationType="none" onRequestClose={onClose}>
@@ -60,16 +103,14 @@ const DrawerNavigation = ({ visible, onClose }) => {
             },
           ]}
         >
-          <View style={[styles.drawerHeader, {marginBottom:!user ? 25 : 0}]}>
-            <Text style={[styles.drawerTitle, { color: theme.text }]}>Menu</Text>
-          </View>
+    
 
           {
             user && (<View style={[styles.menuItem, { height:130, borderBottomColor: theme.border, borderBottomWidth: 1, flexDirection:"column" }]}>
-              <View style={{height:70, width:70, backgroundColor:theme.danger, borderRadius:"50%", alignItems:"center", justifyContent:"center"}}>
-                <Text style={{fontFamily:Fonts.HeaderSemiBold, fontSize:40, color:"#333"}}>{getFirstLetter(extractFirstname(user.username))}</Text>
+              <View style={{height:70, width:70, backgroundColor:"lightblue", borderRadius:"50%", alignItems:"center", justifyContent:"center"}}>
+                <Text style={{fontFamily:Fonts.HeaderSemiBold, fontSize:40, color:"#333"}}>{getFirstLetter(extractFirstname(user?.username))}</Text>
               </View>
-              <Text style={{paddingVertical:10, fontFamily:Fonts.BodySemiBold, color:theme.text}}>Hi {extractFirstname(user.username)}</Text>
+              <Text style={{paddingVertical:10, fontFamily:Fonts.BodySemiBold, color:theme.text}}>Hi {extractFirstname(user?.username)}</Text>
             </View>)
           }
           
@@ -83,22 +124,88 @@ const DrawerNavigation = ({ visible, onClose }) => {
             />
           </View>
 
-          <TouchableOpacity activeOpacity={1} style={[styles.menuItem]}>
-            <Text style={[styles.menuText, { color: theme.text }]}>Profile</Text>
-            <Ionicons name="person-outline" size={23} color={theme.icon}/>
-          </TouchableOpacity>
 
-          <TouchableOpacity activeOpacity={1} style={[styles.menuItem]}>
-            <Text style={[styles.menuText, { color: theme.text }]}>Sign Out</Text>
-            <Ionicons name="log-out-outline" size={23} color={theme.danger}/>
-          </TouchableOpacity>
+          {
+            user && (
+              <TouchableOpacity onPress={()=> setIsProfileVisible(true)} activeOpacity={1} style={[styles.menuItem]}>
+                <Text style={[styles.menuText, { color: theme.text }]}>Profile</Text>
+                <Ionicons name="person-outline" size={23} color={theme.icon}/>
+              </TouchableOpacity>
+            )  
+          }
 
 
+          {
+              user ? (
+                <TouchableOpacity onPress={()=>
+                  activateAlert({
+                    question:"Are you sure you want to Sign Out?",
+                    onConfirm:handleSignOut,
+                    onCancel:()=>{setIsAlertVisible(false)},
+                    confirmText:"Yes"
+                  })
+                } activeOpacity={1}  style={[styles.menuItem]}>
+                  <Text style={[styles.menuText, { color: theme.text }]}>Sign Out</Text>
+                  <Ionicons name="log-out-outline" size={23} color={theme.danger}/>
+                </TouchableOpacity>
+              )  
+
+              :
+
+              <TouchableOpacity activeOpacity={1} onPress={()=> setIsSignInVisible(true)}  style={[styles.menuItem]}>
+                  <Text style={[styles.menuText, { color: theme.text }]}>Sign In</Text>
+                  <Ionicons name="log-in-outline" size={23} color={"green"}/>
+              </TouchableOpacity>
+          }
+
+          
         </Animated.View>
       </TouchableOpacity>
+
+
+      <Profile 
+        visible={isProfileVisible}
+        onClose={()=> setIsProfileVisible(false)}
+      />
+
+      <Alert 
+        visible={isAlertVisible}
+        question={alertDetails.question}
+        onConfirm={alertDetails.onConfirm}
+        onCancel={alertDetails.onCancel}
+        confirmText={alertDetails.confirmText}
+      />
+
+
+      <SingleOptionAlert
+          visible={isSingleAlertVisible} 
+          question={singleAlertDetails.question} 
+          onCancel={singleAlertDetails.onCancel} 
+          confirmText ={singleAlertDetails.confirmText}
+      />
+
+
+      <SignIn
+          visible={isSignInVisible}
+          onClose={() => setIsSignInVisible(false)}
+          onSignInSuccess={() => {
+              
+            setSingleAlertDetails({
+              question:"You have successfully Signed In",
+              onCancel:()=>{setIsSingleAlertVisible(false)},
+              confirmText:"Ok"
+            })
+
+          setIsSingleAlertVisible(true);
+          }}
+      />
+
     </Modal>
   );
 };
+
+
+
 
 const styles = StyleSheet.create({
   overlay: {

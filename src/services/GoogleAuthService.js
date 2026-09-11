@@ -32,13 +32,28 @@ class GoogleAuthService{
             
 
 
-            return userCredential.user;
+            return {status: 200, data:userCredential.user};
             
         } catch (error) {
 
-            return {status:error.status, message:error.message}
+            return {status:error?.status === "undefined" ? 500 : error.status, data:error.message}
+        }
+    }
+
+
+
+    async signOut(){
+        try {
+
+            const response = await GoogleSignin.signOut();
+
+            console.log(response);
+            
+        } catch (error) {
+            throw new Error("Error Signing Out");
             
         }
+
     }
 
 

@@ -84,12 +84,6 @@ const TaskListScreen = () => {
 
   // Renders the appropriate UI element for each list item, including the filter row.
   const allListItems = useCallback((task)=>{
-    // if (task.id === "filter_"){
-
-
-    //   return <Organize key={task.id} fetchTasks={fetchTasks} />
-    // }
-
 
     return(
       <TaskListCard
