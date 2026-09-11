@@ -129,7 +129,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
 
     const user = await UserRepository.getUser();
-    console.log(user)
     if (!user){
 
         setAlertDetails({

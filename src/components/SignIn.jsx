@@ -11,6 +11,7 @@ import AuthService from "../services/AuthService";
 import SingleOptionAlert from "./SingleOptionAlert";
 import googleLogo from "../../assets/google-logo.png"
 import GoogleAuthService from "../services/GoogleAuthService";
+import useSignInWithGoogle from "../hooks/useSignInWithGoogle";
 
 // Sign-in modal with email and password forms
 const SignIn = ({ visible, onClose, onSignInSuccess }) => {
@@ -80,33 +81,19 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
 
   const handleSignInWithGoogle = async()=>{
 
-  try{
-    const user = await GoogleAuthService.signIn();
-    const { displayName, emailVerified, uid} = user
-
-    await UserRepository.setUser({username:displayName, email:user.email, emailVerified, uid})
-
-    onSignInSuccess?.();
-    setIsSignUpVisible(false);
-    onClose();
-  }
-  catch(error){
-
-      setError("Sign in failed. Please try again.");
+   await useSignInWithGoogle({
+    onClose, 
+    onSignInSuccess,
+    setIsSignUpVisible, 
+    setError, 
+    setIsLoading}).signIn()
 
   }
-  finally{
-    setIsLoading(false);
-
-  }
-
-}
 
 
 
   const handleClose = () => {
 
-    console.log('omoo')
     setEmail("");
     setPassword("");
     setError("");

@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator } from "react-native";
+import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from "react-native";
 import { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import Fonts from "../constants/font";
@@ -9,6 +9,9 @@ import UserRepository from "../repository/UserRepository";
 import AuthService from "../services/AuthService";
 import EmailVerification from "./EmailVerification";
 import { auth } from "../../firebaseConfig";
+import googleLogo from "../../assets/google-logo.png"
+import useSignInWithGoogle from "../hooks/useSignInWithGoogle";
+
 
 // Sign-up modal with username, email, and password forms
 const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAll }) => {
@@ -78,6 +81,15 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
   };
 
 
+  const handleSignInWithGoogle = async()=>{
+
+   await useSignInWithGoogle({
+    onClose,
+    onCloseAll,
+    onSignUpSuccess,
+    setError, 
+    setIsLoading}).signIn()
+  }
 
 
 
@@ -143,7 +155,16 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.background, borderColor: theme.border }]}>
           
-          <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
+          <View style={{display:"flex", flexDirection:"row", justifyContent:"space-between"}}>
+            <Text style={[styles.title, { color: theme.text }]}>Sign Up</Text>
+
+
+              <TouchableOpacity onPress={handleSignInWithGoogle}  activeOpacity={1} style={{display:"flex", flexDirection:"row", borderWidth:2, borderColor:theme.primary, justifyContent:"center", alignItems:"center", paddingHorizontal:10, borderRadius:50}}>
+                  <Image source={googleLogo} style={{height:25, width:25, marginRight:5}} />
+                  <Text style={{fontFamily:Fonts.BodySemiBold, fontSize:13, color:theme.text}}>Continue with Google</Text>
+              </TouchableOpacity>
+            
+          </View>
 
           <Text style={[styles.label, { color: theme.textSecondary }]}>Username</Text>
           <TextInput
