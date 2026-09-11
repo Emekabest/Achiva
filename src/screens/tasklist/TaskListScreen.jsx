@@ -60,7 +60,7 @@ const TaskListScreen = () => {
 
     const tasksFilter = filterTasks(data, await FilterService.getFilter());
     
-    const sortedTask = sortTasks(tasksFilter, await SortService.getSort()) 
+    const sortedTask = sortTasks(tasksFilter, await SortService.getSort()); 
 
     setTasks(sortedTask);
   }
@@ -70,13 +70,7 @@ const TaskListScreen = () => {
 
   useEffect(()=>{
 
-    // Merges the filter row with the current task list for rendering.
-    const combineAllList = ()=>{
-      setListItems([{id:"filter_", type:"filter"}, ...tasks])
-
-    }
-
-    combineAllList()
+    setListItems(tasks)
   },[tasks])
 
 
@@ -90,11 +84,11 @@ const TaskListScreen = () => {
 
   // Renders the appropriate UI element for each list item, including the filter row.
   const allListItems = useCallback((task)=>{
-    if (task.id === "filter_"){
+    // if (task.id === "filter_"){
 
 
-      return <Organize key={task.id} fetchTasks={fetchTasks} />
-    }
+    //   return <Organize key={task.id} fetchTasks={fetchTasks} />
+    // }
 
 
     return(
@@ -118,6 +112,8 @@ const TaskListScreen = () => {
   return (
     <View style={[styles.container, {backgroundColor: theme.background}]}>
         <Header title="Achiva" onMenuPress={() => setIsDrawerVisible(true)} />
+
+          <Organize fetchTasks={fetchTasks} />
 
 
         {

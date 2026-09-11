@@ -10,7 +10,7 @@ const SingleOptionAlert = ({visible, question, onCancel, confirmText="Ok" })=>{
   const theme = isDark ? DarkTheme : LightTheme;
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal visible={visible} transparent onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.background, borderColor: theme.border }]}>
           <Text style={[styles.question, { color: theme.text }]}>{question}</Text>

@@ -104,7 +104,7 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
 
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
+    <Modal visible={visible} transparent onRequestClose={handleClose}>
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.background, borderColor: theme.border }]}>
           

@@ -3,14 +3,20 @@ import Fonts from "../constants/font";
 import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
+import { useEffect } from "react";
 
 // Displays a reusable confirmation dialog for destructive or important actions.
 const Alert = ({ visible, question, onCancel, onConfirm, confirmText="OK", cancelText="Cancel" }) => {
   const isDark = useThemeStore((state) => state.isDark);
   const theme = isDark ? DarkTheme : LightTheme;
 
+
+  useEffect(() => {
+  console.log("CONFIRM MODAL visible:", visible);
+}, [visible]);
+
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel}>
+    <Modal visible={visible} animationType="none"  transparent onRequestClose={onCancel}>
       <View style={styles.overlay}>
         <View style={[styles.dialog, { backgroundColor: theme.background, borderColor: theme.border }] }>
           <Text style={[styles.question, { color: theme.text }]}>{question}</Text>
