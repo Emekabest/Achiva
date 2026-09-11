@@ -225,7 +225,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
             <TouchableOpacity
               onPress={() => setIsPasswordVisible(!isPasswordVisible)}
               style={styles.eyeIcon}
-              activeOpacity={0.7}
+              activeOpacity={1}
             >
               <Ionicons
                 name={isPasswordVisible ? "eye" : "eye-off"}
@@ -248,7 +248,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
                 setPassword("");
                 setError("");
               }}
-              activeOpacity={0.7}
+              activeOpacity={1}
               disabled={isLoading}
             >
               <Text style={[styles.signInLinkText, { color: theme.primary }]}>Sign In</Text>
@@ -258,7 +258,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
               <TouchableOpacity
                 onPress={handleClose}
                 style={styles.cancelButton}
-                activeOpacity={0.7}
+                activeOpacity={1}
                 disabled={isLoading}
               >
                 <Text style={[styles.cancelText, { color: theme.primary }]}>Cancel</Text>
@@ -267,7 +267,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
               <TouchableOpacity
                 onPress={handleSignUp}
                 style={[styles.signUpButton, { backgroundColor: theme.primary, opacity: isLoading ? 0.6 : 1 }]}
-                activeOpacity={0.7}
+                activeOpacity={1}
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -16,10 +16,10 @@ const Alert = ({ visible, question, onCancel, onConfirm, confirmText="OK", cance
           <Text style={[styles.question, { color: theme.text }]}>{question}</Text>
 
           <View style={styles.actions}>
-            <TouchableOpacity onPress={onCancel} style={styles.cancelButton} activeOpacity={0.7}>
+            <TouchableOpacity onPress={onCancel} style={styles.cancelButton} activeOpacity={1}>
               <Text style={[styles.cancelText, { color: theme.primary }]}>{cancelText}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={[styles.confirmButton, { backgroundColor: theme.primary }]} activeOpacity={0.7}>
+            <TouchableOpacity onPress={onConfirm} style={[styles.confirmButton, { backgroundColor: theme.primary }]} activeOpacity={1}>
               <Text style={styles.confirmText}>{confirmText}</Text>
             </TouchableOpacity>
           </View>
@@ -28,6 +28,7 @@ const Alert = ({ visible, question, onCancel, onConfirm, confirmText="OK", cance
     </Modal>
   );
 };
+
 
 const styles = StyleSheet.create({
   overlay: {
