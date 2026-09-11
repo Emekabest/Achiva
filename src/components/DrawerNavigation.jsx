@@ -5,6 +5,9 @@ import Fonts from "../constants/font";
 import useThemeStore from "../repository/store";
 import DarkTheme from "../theme/darkTheme";
 import LightTheme from "../theme/lightTheme";
+import UserRepository from "../repository/UserRepository";
+import { extractFirstname, getFirstLetter } from "../utils/extractFirstname";
+import { Ionicons } from "@expo/vector-icons";
 
 const statusBarHeight = Constants.statusBarHeight;
 
@@ -13,6 +16,8 @@ const DrawerNavigation = ({ visible, onClose }) => {
   const isDark = useThemeStore((state) => state.isDark);
   const theme = isDark ? DarkTheme : LightTheme;
   const toggleTheme = useThemeStore((state) => state.toggleTheme);
+
+  const [user, setUser] = useState(null);
 
   const [slideAnim] = useState(new Animated.Value(-300));
 
@@ -29,6 +34,18 @@ const DrawerNavigation = ({ visible, onClose }) => {
     }).start();
   }, [slideAnim, visible]);
 
+
+    useEffect(()=>{
+      const fetchUser = async()=>{
+        const user = await UserRepository.getUser();
+        setUser(user);
+
+      }
+      fetchUser();
+    },[visible])
+
+
+
   return (
     <Modal transparent visible={visible} animationType="none" onRequestClose={onClose}>
       <TouchableOpacity activeOpacity={1} onPress={onClose} style={styles.overlay}>
@@ -43,11 +60,20 @@ const DrawerNavigation = ({ visible, onClose }) => {
             },
           ]}
         >
-          <View style={styles.drawerHeader}>
+          <View style={[styles.drawerHeader, {marginBottom:!user ? 25 : 0}]}>
             <Text style={[styles.drawerTitle, { color: theme.text }]}>Menu</Text>
           </View>
 
-          <View style={[styles.menuItem, { borderBottomColor: theme.border }]}>
+          {
+            user && (<View style={[styles.menuItem, { height:130, borderBottomColor: theme.border, borderBottomWidth: 1, flexDirection:"column" }]}>
+              <View style={{height:70, width:70, backgroundColor:theme.danger, borderRadius:"50%", alignItems:"center", justifyContent:"center"}}>
+                <Text style={{fontFamily:Fonts.HeaderSemiBold, fontSize:40, color:"#333"}}>{getFirstLetter(extractFirstname(user.username))}</Text>
+              </View>
+              <Text style={{paddingVertical:10, fontFamily:Fonts.BodySemiBold, color:theme.text}}>Hi {extractFirstname(user.username)}</Text>
+            </View>)
+          }
+          
+          <View style={[styles.menuItem]}>
             <Text style={[styles.menuText, { color: theme.text }]}>Dark mode</Text>
             <Switch
               value={isDark}
@@ -56,6 +82,18 @@ const DrawerNavigation = ({ visible, onClose }) => {
               thumbColor="#fff"
             />
           </View>
+
+          <TouchableOpacity activeOpacity={1} style={[styles.menuItem]}>
+            <Text style={[styles.menuText, { color: theme.text }]}>Profile</Text>
+            <Ionicons name="person-outline" size={23} color={theme.icon}/>
+          </TouchableOpacity>
+
+          <TouchableOpacity activeOpacity={1} style={[styles.menuItem]}>
+            <Text style={[styles.menuText, { color: theme.text }]}>Sign Out</Text>
+            <Ionicons name="log-out-outline" size={23} color={theme.danger}/>
+          </TouchableOpacity>
+
+
         </Animated.View>
       </TouchableOpacity>
     </Modal>
@@ -81,7 +119,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    // marginBottom: 24,
   },
   drawerTitle: {
     fontSize: 20,
@@ -92,11 +130,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 14,
-    borderBottomWidth: 1,
+    
   },
   menuText: {
     fontSize: 16,
-    fontFamily: Fonts.BodyRegular,
+    fontFamily: Fonts.BodyMedium,
   },
 });
 
