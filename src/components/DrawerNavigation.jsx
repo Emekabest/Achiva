@@ -58,12 +58,16 @@ const DrawerNavigation = ({ visible, onClose }) => {
     },[visible])
 
 
+
+
     const handleSignOut = async()=>{
 
       try {
         await UserRepository.removeUser();
 
         await GoogleAuthService.signOut();
+
+        onClose();
 
       } catch (error) {
         console.log(error)
@@ -86,12 +90,23 @@ const DrawerNavigation = ({ visible, onClose }) => {
 
       setIsAlertVisible(true)   
     }
+
+
+    const closeAllDrawerModals = ()=>{
+      console.log("Rannn")
+
+      onClose();
+      setIsProfileVisible(false);
+      setIsSignInVisible(false)
+      setIsAlertVisible(false)
+      setIsSingleAlertVisible(false)
+    }
     
 
 
   return (
     <Modal transparent visible={visible} animationType="none" onRequestClose={onClose}>
-      <TouchableOpacity activeOpacity={1} onPress={onClose} style={styles.overlay}>
+      <TouchableOpacity activeOpacity={1} onPress={closeAllDrawerModals} style={styles.overlay}>
         <Animated.View
           style={[
             styles.drawer,
@@ -168,6 +183,7 @@ const DrawerNavigation = ({ visible, onClose }) => {
         onClose={()=> setIsProfileVisible(false)}
       />
 
+
       <Alert 
         visible={isAlertVisible}
         question={alertDetails.question}
@@ -192,7 +208,10 @@ const DrawerNavigation = ({ visible, onClose }) => {
               
             setSingleAlertDetails({
               question:"You have successfully Signed In",
-              onCancel:()=>{setIsSingleAlertVisible(false)},
+              onCancel:()=>{
+                setIsSingleAlertVisible(false);
+                onClose();
+              },
               confirmText:"Ok"
             })
 

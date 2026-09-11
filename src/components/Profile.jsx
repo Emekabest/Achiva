@@ -28,6 +28,12 @@ const Profile = ({visible, onClose})=>{
 
         }
         fetchUser();
+
+
+        return()=>{
+
+            
+        }
   },[visible])
 
 

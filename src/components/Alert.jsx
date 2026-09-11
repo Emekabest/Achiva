@@ -11,9 +11,6 @@ const Alert = ({ visible, question, onCancel, onConfirm, confirmText="OK", cance
   const theme = isDark ? DarkTheme : LightTheme;
 
 
-  useEffect(() => {
-  console.log("CONFIRM MODAL visible:", visible);
-}, [visible]);
 
   return (
     <Modal visible={visible} animationType="none"  transparent onRequestClose={onCancel}>

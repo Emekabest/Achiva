@@ -146,30 +146,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
         
         return;
     }
-    // else if (!user?.emailVerified){
-
-
-    //     setAlertDetails({
-    //         question:"Your account isn't verified yet",
-    //         onCancel:()=>{setIsAlertVisible(false)},
-    //         onConfirm:async()=>{
-    //             setIsAlertVisible(false);
-
-    //             setVerificationEmail(user.email || "");
-    //             setIsEmailVerificationVisible(true);
-
-    //             await AuthService.sendEmailVerification(auth.currentUser);
-    //         },
-    //         confirmText:"Verify Now"
-    //     })
-    //     setIsAlertVisible(true);
-
-    //     return;
-    // }
     
-
-
-
 
 
         try{

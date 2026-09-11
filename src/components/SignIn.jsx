@@ -42,10 +42,6 @@ const SignIn = ({ visible, onClose, onSignInSuccess }) => {
 
     setIsLoading(true);
 
-    
-
-
-
     try {
      const user = await AuthService.SignIn(email, password);
      
