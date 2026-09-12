@@ -106,7 +106,6 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
 
   const handleVerificationComplete = async() => {
 
-
     await auth.currentUser.reload(); 
     await UserRepository.updateUser(auth.currentUser);
     setIsEmailVerificationVisible(false);
