@@ -107,7 +107,8 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
   const handleVerificationComplete = async() => {
 
 
-    await auth.currentUser.reload();
+    await auth.currentUser.reload(); 
+    await UserRepository.updateUser(auth.currentUser);
     setIsEmailVerificationVisible(false);
     setVerificationUser(null);
     setVerificationEmail("");
@@ -280,6 +281,7 @@ const SignUp = ({ visible, onClose, onSignUpSuccess, onSwitchToSignIn, onCloseAl
           </View>
         </View>
       </View>
+
 
       <EmailVerification
         visible={isEmailVerificationVisible}

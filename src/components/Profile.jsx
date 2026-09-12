@@ -8,6 +8,9 @@ import Fonts from "../constants/font";
 import { useEffect, useState } from "react";
 import UserRepository from "../repository/UserRepository";
 import { getFirstLetter } from "../utils/extractFirstname";
+import EmailVerification from "./EmailVerification";
+import { auth } from "../../firebaseConfig";
+import AuthService from "../services/AuthService";
 
 
 const statusBarHeight = Constants.statusBarHeight;
@@ -18,8 +21,11 @@ const Profile = ({visible, onClose})=>{
   const isDark = useThemeStore((state) => state.isDark);
   const theme = isDark ? DarkTheme : LightTheme;
 
+
   const [user, setUser] = useState(null);
-  
+  const [isEmailVerificationVisible, setIsEmailVerificationVisible] = useState(false);
+
+console.log(user)  
 
   useEffect(()=>{
         const fetchUser = async()=>{
@@ -37,6 +43,41 @@ const Profile = ({visible, onClose})=>{
   },[visible])
 
 
+
+const handleVerifyEmail = async()=>{
+
+    setIsEmailVerificationVisible(true);
+
+    await handleResendVerificationEmail();
+
+}
+
+
+  const handleDoThisLater = () => {
+    setIsEmailVerificationVisible(false);
+
+  }
+
+
+  const handleResendVerificationEmail = async () => {
+    try {
+      await AuthService.sendEmailVerification(auth.currentUser);
+    } catch (err) {
+
+
+      throw new Error(err.message || "Failed to resend verification email");
+    }
+  };
+
+
+
+  const handleVerificationComplete = async()=>{
+
+        setIsEmailVerificationVisible(false);
+        await auth.currentUser.reload();
+        await UserRepository.updateUser(auth.currentUser);
+
+  }
 
 
 
@@ -105,7 +146,7 @@ const Profile = ({visible, onClose})=>{
                                         <Ionicons name="close-circle" color={"red"} size={15} />
                                     </View>
 
-                                    <TouchableOpacity activeOpacity={1}  style={{flex:0.8, width:"90%", backgroundColor:theme.button, alignItems:"center", justifyContent:"center", borderRadius:20}}>
+                                    <TouchableOpacity onPress={handleVerifyEmail} activeOpacity={1} style={{flex:0.8, width:"90%", backgroundColor:theme.button, alignItems:"center", justifyContent:"center", borderRadius:20}}>
                                         <Text style={{fontSize:12, color:theme.text, fontFamily:Fonts.BodySemiBold}}>Verify Now</Text>
                                     </TouchableOpacity>
                                 </View>                                
@@ -118,6 +159,14 @@ const Profile = ({visible, onClose})=>{
 
                 </View>
             </View>
+
+            <EmailVerification
+                visible={isEmailVerificationVisible}
+                email={user?.email}
+                onVerified={handleVerificationComplete}
+                onResendEmail={handleResendVerificationEmail}
+                onDoThisLater={handleDoThisLater}
+            />
         </Modal>
     )
 }

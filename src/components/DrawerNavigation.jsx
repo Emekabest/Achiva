@@ -93,7 +93,6 @@ const DrawerNavigation = ({ visible, onClose }) => {
 
 
     const closeAllDrawerModals = ()=>{
-      console.log("Rannn")
 
       onClose();
       setIsProfileVisible(false);

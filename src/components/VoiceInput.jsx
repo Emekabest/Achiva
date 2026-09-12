@@ -321,6 +321,7 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                 visible={isEmailVerificationVisible}
                 email={verificationEmail}
                 onVerified={async() => {
+                    console.log("Running")
                     setIsEmailVerificationVisible(false);
                     await auth.currentUser.reload(); 
                     await UserRepository.updateUser(auth.currentUser);
