@@ -1,43 +1,32 @@
-import axios from "axios";
-import OpenAI from "openai";
-import Constants from "expo-constants"
-import GenerateTaskId from "../utils/generateTaskId";
 
 
-const OPENAI_API_KEY = process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
 // Wraps OpenAI audio and chat APIs for speech-to-text and task extraction.
 class OpenAIService{
 
     // Sends recorded audio to OpenAI for transcription.
-    async transcribeAudio(audioUri) {
+    async transcribeAudio(file, OPENAI_API_KEY) {
 
         try{
 
-
             const formData = new FormData();
 
-            formData.append("file", {
-                uri: audioUri,
-                name: "recording.m4a",
-                type: "audio/m4a",
-            })
+            formData.append("file", file)
 
             formData.append("model", "gpt-4o-mini-transcribe");
 
-            const API_URL = `https://api.openai.com/v1/audio/transcriptions`
-            const response = await axios.post(API_URL, formData, {
-                headers:{
-                    Authorization:`Bearer ${OPENAI_API_KEY}`,
-                    "Content-Type": "multipart/form-data",
-                }
-            })
+            const API_URL = "https://api.openai.com/v1/audio/transcriptions";
+            const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${OPENAI_API_KEY}`,
+            },
+            body: formData,
+            });
 
-            const transcribe = await response.data.text;
+            const data = await response.json();
 
-            return transcribe;
-
-
+            return data;
         }
         catch(error){
             console.log("Error Transcribing Audio::"+error)
@@ -50,7 +39,7 @@ class OpenAIService{
 
 
     // Converts a transcript into a list of individual task object.
-    async splitTasks(transcript){
+    async splitTasks(transcript, OPENAI_API_KEY){
 
         try{
 
@@ -111,19 +100,26 @@ class OpenAIService{
                 temperature: 0
             }
 
-            const API_URL = `https://api.openai.com/v1/chat/completions`;
-            const response = await axios.post(API_URL, data, {
-                headers:{
-                    Authorization:`Bearer ${OPENAI_API_KEY}`,
-                    "Content-Type" : "application/json"
-                }
-            })
+
+            const API_URL = "https://api.openai.com/v1/chat/completions";
+
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${OPENAI_API_KEY}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            const result = await response.json();
 
 
-            const texts = response.data.choices[0].message.content;
+            const texts = JSON.parse(result.choices[0].message.content);
 
-        
-            return JSON.parse(texts)    
+
+            return texts;  
+
         } catch (error) {
             console.log("Error splitting Task::"+error)
             

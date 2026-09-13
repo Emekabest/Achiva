@@ -21,6 +21,7 @@ import SignIn from "./SignIn";
 import EmailVerification from "./EmailVerification";
 import AuthService from "../services/AuthService";
 import { auth } from "../../firebaseConfig.js";
+import VoiceAiService from "../services/VoiceAiService.js";
 
 const { width } = Dimensions.get("window");//
 
@@ -176,8 +177,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
 
                     const recording = await startRecording();
 
-                    console.log("Recording started:", recording?.isRecording);
-
                     if (recording?.isRecording){
                         setIsRecordingMode(true);
                         handleRecordingModeViaExternalComponent(true)
@@ -202,15 +201,14 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                setIsTranscribing(true);
 
                const transcribe = await OpenAIService.transcribeAudio(audioUri);
+
+              const transcribe2 = await VoiceAiService.transcribeAudio(audioUri);
+
+               await VoiceAiService.splitTasks(transcribe2);
                
                const rawTasks = await OpenAIService.splitTasks(transcribe);
 
-                console.log(rawTasks)
-
-
                setIsTranscribing(false);
-
-               console.log(rawTasks)
 
                
                if (rawTasks?.length > 0){

@@ -11,20 +11,20 @@ const SplashScreen = ()=>{
 
 
 
-    // useEffect(()=>{
+    useEffect(()=>{
 
-    //     const timeout = setTimeout(()=>{
+        const timeout = setTimeout(()=>{
 
-    //         navigation.replace("tasklist");
+            navigation.replace("tasklist");
 
-    //     }, 3000)
+        }, 3000)
 
 
-    //     return ()=>{
+        return ()=>{
 
-    //         clearTimeout(timeout)
-    //     }
-    // },[])
+            clearTimeout(timeout)
+        }
+    },[])
 
     
 
