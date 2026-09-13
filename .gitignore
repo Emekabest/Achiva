@@ -44,6 +44,5 @@ yarn-error.*
 /android
 
 
-/.google-services.json
-/.firebase.json
-/.firebaseConfig.js
+/google-services.json
+/firebaseConfig.js
