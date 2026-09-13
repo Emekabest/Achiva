@@ -201,10 +201,6 @@ const VoiceInput = ({handleRecordingModeViaExternalComponent, fetchTasks}) => {
                setIsTranscribing(true);
 
                const transcribe = await OpenAIService.transcribeAudio(audioUri);
-
-              const transcribe2 = await VoiceAiService.transcribeAudio(audioUri);
-
-               await VoiceAiService.splitTasks(transcribe2);
                
                const rawTasks = await OpenAIService.splitTasks(transcribe);
 
