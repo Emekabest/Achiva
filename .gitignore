@@ -46,3 +46,4 @@ yarn-error.*
 
 .google-services.json
 .firebase.json
+.firebaseConfig.js
