@@ -8,8 +8,8 @@ export default ({ config }) => ({
 
   android: {
     ...config.android,
-    googleServicesFile: "./google-services.json",
-  },
+    googleServicesFile: process.env.googleServiceJson,  
+},
 
   extra: {
     ...(config.extra || {}),
