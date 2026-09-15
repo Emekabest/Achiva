@@ -36,7 +36,20 @@ class GoogleAuthService{
             
         } catch (error) {
 
-            return {status:error?.status === "undefined" ? 500 : error.status, data:error.message}
+            console.log("GOOGLE SIGN-IN ERROR:", error);
+            console.log("ERROR CODE:", error?.code);
+            console.log("ERROR MESSAGE:", error?.message);
+            console.log("ERROR STATUS:", error?.status);
+
+            return {
+                status: error?.status || 500,
+                data: {
+                    message: error?.message,
+                    code: error?.code,
+                    status: error?.status,
+                }
+            };
+
         }
     }
 

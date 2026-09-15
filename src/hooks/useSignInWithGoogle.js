@@ -23,12 +23,25 @@ const useSignInWithGoogle = ({onClose, onCloseAll, onSignInSuccess, onSignUpSucc
         onClose();
         onCloseAll?.();
     }
+    else{
+          // TEMPORARY: show the actual error
+        setError(
+            response.data?.message ||
+            "Google Sign-In failed."
+        );
+
+    }
    
 
   }
   catch(error){
 
-      setError("Sign in failed. Please try again.");
+        console.log("SCREEN GOOGLE ERROR:", error);
+
+        setError(
+            error?.message ||
+            "Sign in failed. Please try again."
+        );
 
   }
   finally{
